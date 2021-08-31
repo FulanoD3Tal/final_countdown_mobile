@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import './home_menu.dart';
 import './countdown_item.dart';
@@ -43,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
     {"count": '2', "type": "test", "name": "diet"},
     {"count": '2', "type": "test", "name": "diet"},
     {"count": '2131', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
     {"count": '2', "type": "test", "name": "diet"},
   ];
   @override
@@ -96,6 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: countdowns.length > 0
           ? GridView.count(
               crossAxisCount: 2,
+              padding: EdgeInsets.all(26),
+              crossAxisSpacing: 40,
+              mainAxisSpacing: 15,
               children: countdowns
                   .map((item) => CountdownItem(
                       count: int.parse(item['count'].toString()),

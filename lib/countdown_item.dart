@@ -11,7 +11,6 @@ class CountdownItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin:EdgeInsets.all(32),
       decoration: BoxDecoration(
         color: Color(0xFFDCDCDD),
         borderRadius: BorderRadius.circular(10),
