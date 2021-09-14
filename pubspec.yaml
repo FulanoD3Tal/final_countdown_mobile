@@ -1,5 +1,5 @@
-name: final_coutdown
-description: A new Flutter project.
+name: 'final_coutdown'
+description: Keep track of your goals in one place
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -21,6 +21,7 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
+  flutter_launcher_icons: '^0.9.2'
   flutter:
     sdk: flutter
 
@@ -47,6 +48,11 @@ flutter:
         - asset: assets/fonts/Barlow-Regular.ttf
         - asset: assets/fonts/Barlow-Bold.ttf
           weight: 700
+#Flutter icon configuration
+flutter_icons:
+  android: 'launcher_icon'
+  ios: true
+  image_path: 'assets/icon/icon.png'
 
   # To add assets to your application, add an assets section, like this:
   # assets:
