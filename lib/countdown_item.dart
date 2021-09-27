@@ -4,9 +4,12 @@ class CountdownItem extends StatelessWidget {
   final int count;
   final String type;
   final String name;
-  const CountdownItem(
-      {Key? key, required this.count, required this.type, required this.name})
-      : super(key: key);
+  const CountdownItem({
+    Key? key,
+    this.count = 0,
+    this.type = '',
+    this.name = '',
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import './home_menu.dart';
 import './countdown_item.dart';
 import './form.dart';
+import './models/countdown.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // TODO: Get data from device
-  var countdowns = <Map<String, String>>[];
+  var countdowns = <Countdown>[];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +60,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const FormCountdown(),
+                      builder: (context) => FormCountdown(
+                        onSubmit: (countdown) {
+                          setState(() {
+                            countdowns.add(countdown);
+                          });
+                        },
+                      ),
                     ));
               },
               icon: Icon(
@@ -97,10 +104,13 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisSpacing: 40,
               mainAxisSpacing: 15,
               children: countdowns
-                  .map((item) => CountdownItem(
-                      count: int.parse(item['count'].toString()),
-                      type: item['type'].toString(),
-                      name: item['name'].toString()))
+                  .map(
+                    (item) => CountdownItem(
+                      count: item.count,
+                      type: item.type.toString(),
+                      name: item.name.toString(),
+                    ),
+                  )
                   .toList(),
             )
           : Center(

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
 class Input extends StatefulWidget {
-  const Input({
-    Key? key,
-    required this.label,
-    this.required = false,
-    this.textArea = true,
-  }) : super(key: key);
-
   final String label;
   final bool required;
   final bool textArea;
+  final Function(String? value) onSaved;
+  final TextInputType? keyboardType;
+  
+  const Input({
+    Key? key,
+    required this.label,
+    required this.onSaved,
+    this.required = false,
+    this.textArea = true,
+    this.keyboardType,
+  }) : super(key: key);
+
 
   @override
   _InputState createState() => _InputState();
@@ -32,7 +37,15 @@ class _InputState extends State<Input> {
             ),
           ),
         ),
-        TextField(
+        TextFormField(
+          onSaved: widget.onSaved,
+          keyboardType: widget.keyboardType,
+          validator: (value) {
+            if (widget.required && (value == null || value.isEmpty)) {
+              return 'Field required';
+            }
+            return null;
+          },
           maxLines: widget.textArea ? null : 1,
           decoration: InputDecoration(
             fillColor: Color(0xFFDCDCDD),
