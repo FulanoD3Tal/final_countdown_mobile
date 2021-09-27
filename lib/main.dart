@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import './home_menu.dart';
 import './countdown_item.dart';
+import './form.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,19 +34,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // TODO: Get data from device
-  var countdowns = <Map<String, String>>[
-    {"count": '2131', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
-    {"count": '2131', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
-    {"count": '2131', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
-    {"count": '2131', "type": "test", "name": "diet"},
-    {"count": '2', "type": "test", "name": "diet"},
-  ];
+  var countdowns = <Map<String, String>>[];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +55,13 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FormCountdown(),
+                    ));
+              },
               icon: Icon(
                 Icons.add_circle_outline,
                 size: 32,
@@ -84,10 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Color(0xFF4C5C68),
               ),
               itemBuilder: (context) {
-                return homeMenus.map((menu) => PopupMenuItem(
-                      child: Text(menu.label),
-                      value: menu.value,
-                    )).toList();
+                return homeMenus
+                    .map((menu) => PopupMenuItem(
+                          child: Text(menu.label),
+                          value: menu.value,
+                        ))
+                    .toList();
               },
             ),
           ),
