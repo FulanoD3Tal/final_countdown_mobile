@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'db_helpers/sqlite_helper.dart';
 import 'inputtext.dart';
 import './models/countdown.dart';
 
 class FormCountdown extends StatefulWidget {
   const FormCountdown({
     Key? key,
-    required this.onSubmit,
   }) : super(key: key);
-
-  final Function(Countdown) onSubmit;
 
   @override
   _FormState createState() => _FormState();
 }
 
 class _FormState extends State<FormCountdown> {
+  final db = CountdownProvider.instance;
   final _formKey = GlobalKey<FormState>();
   Countdown model = Countdown();
 
@@ -75,6 +74,7 @@ class _FormState extends State<FormCountdown> {
                         keyboardType: TextInputType.number,
                         onSaved: (value) {
                           model.count = int.tryParse(value ?? '') ?? 0;
+                          model.goal = int.tryParse(value ?? '') ?? 0;
                         },
                       ),
                       Input(
@@ -92,9 +92,9 @@ class _FormState extends State<FormCountdown> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    widget.onSubmit(model);
-                    Navigator.pop(context);
+                    _formKey.currentState?.save();
+                    db.add(model);
+                    Navigator.of(context).pop();
                   }
                 },
                 style: ButtonStyle(

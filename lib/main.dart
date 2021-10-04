@@ -1,3 +1,4 @@
+import 'package:final_coutdown/db_helpers/sqlite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -34,8 +35,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // TODO: Get data from device
-  var countdowns = <Countdown>[];
+  final db = CountdownProvider.instance;
+  late List<Countdown> countdowns;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    refreshCountdowns();
+  }
+
+  Future refreshCountdowns() async {
+    setState(() {
+      isLoading = true;
+    });
+    this.countdowns = await db.getAll();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,18 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FormCountdown(
-                        onSubmit: (countdown) {
-                          setState(() {
-                            countdowns.add(countdown);
-                          });
-                        },
-                      ),
-                    ));
+              onPressed: () async {
+                await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => FormCountdown(),
+                ));
+                refreshCountdowns();
               },
               icon: Icon(
                 Icons.add_circle_outline,
@@ -97,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: countdowns.length > 0
+      body: !isLoading && countdowns.length > 0
           ? GridView.count(
               crossAxisCount: 2,
               padding: EdgeInsets.all(26),
@@ -106,9 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: countdowns
                   .map(
                     (item) => CountdownItem(
-                      count: item.count,
-                      type: item.type.toString(),
-                      name: item.name.toString(),
+                      countdown: item,
                     ),
                   )
                   .toList(),
