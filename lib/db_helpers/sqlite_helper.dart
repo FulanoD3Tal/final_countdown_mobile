@@ -83,4 +83,14 @@ class CountdownProvider {
       whereArgs: [countdown?.id],
     );
   }
+
+  Future<int> delete(int? id) async{
+    final db = await database;
+    return await db.delete(tableName,where: '$columnId = ?',whereArgs: [id]);
+  }
+
+  Future close() async{
+    final db = await database;
+    db.close();
+  }
 }

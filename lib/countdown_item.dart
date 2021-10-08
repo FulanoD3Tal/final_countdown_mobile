@@ -31,7 +31,7 @@ class CountdownItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              countdown.count.toString(),
+              (countdown.goal - countdown.count).toString(),
               style: TextStyle(
                 fontSize: 45,
                 fontWeight: FontWeight.bold,

@@ -47,6 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
     refreshCountdowns();
   }
 
+  @override
+  void dispose() {
+    db.close();
+    super.dispose();
+  }
+
   Future refreshCountdowns() async {
     setState(() {
       isLoading = true;

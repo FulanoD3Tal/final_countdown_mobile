@@ -70,7 +70,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
             padding: EdgeInsets.only(right: 20.0),
             child: IconButton(
               onPressed: () {
-                _showDialog(context);
+                _showDialog(context, countdown?.id);
               },
               icon: Icon(
                 Icons.delete_outline,
@@ -113,7 +113,9 @@ class _DetailCountdownState extends State<DetailCountdown> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${countdown?.type} left of ${countdown?.goal}',
+                              (countdown!.goal - countdown!.count) == 0
+                                  ? '${countdown?.type} finished'
+                                  : '${countdown?.type} left of ${countdown?.goal}',
                               style: TextStyle(
                                 color: Color(0xff4C5C68),
                                 fontSize: 24,
@@ -124,25 +126,28 @@ class _DetailCountdownState extends State<DetailCountdown> {
                         Center(
                           child: Padding(
                             padding: EdgeInsets.only(top: 30),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                countdown?.count--;
-                                await db.update(countdown);
-                                refreshCountdown();
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  Color(0xff1985A1),
-                                ),
-                              ),
-                              child: Text(
-                                'remove one'.toUpperCase(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
+                            child: (countdown!.goal - countdown!.count) == 0
+                                ? null
+                                : ElevatedButton(
+                                    onPressed: () async {
+                                      countdown?.count++;
+                                      await db.update(countdown);
+                                      refreshCountdown();
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                        Color(0xff1985A1),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'remove one'.toUpperCase(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
                           ),
                         ),
                         Padding(
@@ -193,7 +198,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
     );
   }
 
-  void _showDialog(BuildContext context) {
+  void _showDialog(BuildContext context, int? countdownId) {
     showDialog(
         context: context,
         builder: (context) {
@@ -213,7 +218,9 @@ class _DetailCountdownState extends State<DetailCountdown> {
                 child: Text('Cancel'),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await db.delete(countdownId);
                   Navigator.of(context).pop();
                 },
                 child: Text('Yes'),
@@ -225,11 +232,15 @@ class _DetailCountdownState extends State<DetailCountdown> {
 
   Text count() {
     return Text(
-      countdown?.count.toString() ?? '',
+      (countdown!.goal - countdown!.count) == 0
+          ? countdown!.goal.toString()
+          : (countdown!.goal - countdown!.count).toString(),
       style: TextStyle(
           fontSize: 100,
           fontWeight: FontWeight.w700,
-          color: Color(0xff4C5C68),
+          color: (countdown!.goal - countdown!.count) == 0
+              ? Color(0xff1985A1)
+              : Color(0xff4C5C68),
           shadows: [
             Shadow(
               blurRadius: 25,

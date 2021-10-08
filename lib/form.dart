@@ -73,7 +73,6 @@ class _FormState extends State<FormCountdown> {
                         required: true,
                         keyboardType: TextInputType.number,
                         onSaved: (value) {
-                          model.count = int.tryParse(value ?? '') ?? 0;
                           model.goal = int.tryParse(value ?? '') ?? 0;
                         },
                       ),
