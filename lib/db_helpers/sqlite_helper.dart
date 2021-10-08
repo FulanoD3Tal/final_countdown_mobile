@@ -47,8 +47,7 @@ class CountdownProvider {
   // or and empty list to avoid check null values
   Future<List<Countdown>> getAll() async {
     Database? db = await database;
-    List<Map<String, Object?>>? maps =
-        await db.query(tableName);
+    List<Map<String, Object?>>? maps = await db.query(tableName);
     List<Countdown> countdowns = [];
     if (maps != null && maps.length > 0) {
       countdowns = maps.map((map) => Countdown.fromMap(map: map)).toList();
@@ -62,6 +61,26 @@ class CountdownProvider {
     await db.insert(
       tableName,
       countdown.toMap(),
+    );
+  }
+
+  Future<Countdown?> find(int? id) async {
+    Database? db = await database;
+    List<Map<String, Object?>>? maps =
+        await db.query(tableName, where: '$columnId = ?', whereArgs: [id]);
+    if (maps.length > 0) {
+      return Countdown.fromMap(map: maps.first);
+    }
+    return null;
+  }
+
+  Future<void> update(Countdown? countdown) async {
+    final db = await database;
+    db.update(
+      tableName,
+      countdown?.toMap() ?? {},
+      where: 'id = ?',
+      whereArgs: [countdown?.id],
     );
   }
 }

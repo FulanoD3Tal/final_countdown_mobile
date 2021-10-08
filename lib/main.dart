@@ -6,6 +6,7 @@ import './home_menu.dart';
 import './countdown_item.dart';
 import './form.dart';
 import './models/countdown.dart';
+import 'detail.dart';
 
 void main() {
   runApp(MyApp());
@@ -120,6 +121,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   .map(
                     (item) => CountdownItem(
                       countdown: item,
+                      onTap: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (contextr) => DetailCountdown(
+                                    countdownId: item.id,
+                                  )),
+                        );
+                        refreshCountdowns();
+                      },
                     ),
                   )
                   .toList(),

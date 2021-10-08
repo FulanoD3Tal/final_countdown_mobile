@@ -18,12 +18,12 @@ final List<String> columnsCountdown = [
 class Countdown {
   int? id;
   String? name;
-  int? count;
-  int? goal;
+  int count;
+  int goal;
   String? type;
   String? description;
 
-  Countdown();
+  Countdown({this.count = 0,this.goal=0});
 
   Countdown.empty({
     this.name = '',
@@ -33,7 +33,7 @@ class Countdown {
     this.description = '',
   });
 
-  Countdown.fromMap({required Map<String, Object?> map}) {
+  Countdown.fromMap({this.count = 0,this.goal = 0,required Map<String, Object?> map}) {
     id = int.parse(map[columnId].toString());
     name = map[columnName].toString();
     count = int.parse(map[columnCount].toString());
