@@ -4,9 +4,10 @@ class Input extends StatefulWidget {
   final String label;
   final bool required;
   final bool textArea;
+  final String? defaultValue;
   final Function(String? value) onSaved;
   final TextInputType? keyboardType;
-  
+
   const Input({
     Key? key,
     required this.label,
@@ -14,8 +15,8 @@ class Input extends StatefulWidget {
     this.required = false,
     this.textArea = true,
     this.keyboardType,
+    this.defaultValue,
   }) : super(key: key);
-
 
   @override
   _InputState createState() => _InputState();
@@ -38,6 +39,7 @@ class _InputState extends State<Input> {
           ),
         ),
         TextFormField(
+          initialValue: widget.defaultValue,
           onSaved: widget.onSaved,
           keyboardType: widget.keyboardType,
           validator: (value) {

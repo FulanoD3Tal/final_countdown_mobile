@@ -12,13 +12,15 @@ class CountdownItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int count = countdown.goal - countdown.count;
+    bool finished = count == 0;
     return GestureDetector(
       onTap: () {
         onTap();
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Color(0xFFDCDCDD),
+          color: finished ? Color(0xff1985A1) : Color(0xFFDCDCDD),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
@@ -31,25 +33,25 @@ class CountdownItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              (countdown.goal - countdown.count).toString(),
+              finished ? countdown.goal.toString() : (count).toString(),
               style: TextStyle(
                 fontSize: 45,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF4C5C68),
+                color: finished ? Color(0xffFFFFFF) : Color(0xFF4C5C68),
               ),
             ),
             Text(
               countdown.type.toString(),
               style: TextStyle(
                 fontSize: 24,
-                color: Color(0xFF4C5C68),
+                color: finished ? Color(0xffFFFFFF) : Color(0xFF4C5C68),
               ),
             ),
             Text(
               countdown.name.toString(),
               style: TextStyle(
                 fontSize: 12,
-                color: Color(0xFF4C5C68),
+                color: finished ? Color(0xffFFFFFF) : Color(0xFF4C5C68),
               ),
             ),
           ],

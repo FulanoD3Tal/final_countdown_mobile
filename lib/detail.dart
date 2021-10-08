@@ -1,3 +1,4 @@
+import 'package:final_coutdown/form.dart';
 import 'package:flutter/material.dart';
 
 import 'db_helpers/sqlite_helper.dart';
@@ -58,7 +59,14 @@ class _DetailCountdownState extends State<DetailCountdown> {
           Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => FormCountdown(
+                    id: countdown?.id,
+                  ),
+                ));
+                refreshCountdown();
+              },
               icon: Icon(
                 Icons.edit_outlined,
                 size: 32,

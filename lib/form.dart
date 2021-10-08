@@ -5,8 +5,10 @@ import 'inputtext.dart';
 import './models/countdown.dart';
 
 class FormCountdown extends StatefulWidget {
+  final int? id;
   const FormCountdown({
     Key? key,
+    this.id,
   }) : super(key: key);
 
   @override
@@ -16,7 +18,28 @@ class FormCountdown extends StatefulWidget {
 class _FormState extends State<FormCountdown> {
   final db = CountdownProvider.instance;
   final _formKey = GlobalKey<FormState>();
-  Countdown model = Countdown();
+  bool isLoading = false;
+
+  late Countdown model;
+
+  void initState() {
+    super.initState();
+    _getCountdown();
+  }
+
+  Future _getCountdown() async {
+    setState(() {
+      isLoading = true;
+    });
+    if (widget.id != null) {
+      this.model = await db.find(widget.id) ?? Countdown();
+    } else {
+      model = Countdown();
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +79,7 @@ class _FormState extends State<FormCountdown> {
                     children: [
                       Input(
                         label: 'Name',
+                        defaultValue: model.name,
                         required: true,
                         onSaved: (value) {
                           model.name = value;
@@ -64,6 +88,7 @@ class _FormState extends State<FormCountdown> {
                       Input(
                         label: 'Type',
                         required: true,
+                        defaultValue: model.type,
                         onSaved: (value) {
                           model.type = value;
                         },
@@ -71,6 +96,8 @@ class _FormState extends State<FormCountdown> {
                       Input(
                         label: 'Goal',
                         required: true,
+                        defaultValue:
+                            model.goal > 0 ? model.goal.toString() : '',
                         keyboardType: TextInputType.number,
                         onSaved: (value) {
                           model.goal = int.tryParse(value ?? '') ?? 0;
@@ -80,6 +107,7 @@ class _FormState extends State<FormCountdown> {
                         label: 'Description',
                         required: false,
                         textArea: true,
+                        defaultValue: model.description,
                         onSaved: (value) {
                           model.description = value;
                         },
@@ -92,7 +120,13 @@ class _FormState extends State<FormCountdown> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState?.save();
-                    db.add(model);
+                    if (model.id != null) {
+                      model.count =
+                          (model.goal < model.count) ? 0 : model.count;
+                      db.update(model);
+                    } else {
+                      db.add(model);
+                    }
                     Navigator.of(context).pop();
                   }
                 },
