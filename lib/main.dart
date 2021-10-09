@@ -1,7 +1,8 @@
-import 'package:final_coutdown/db_helpers/sqlite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:final_coutdown/db_helpers/sqlite_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 import './home_menu.dart';
 import './countdown_item.dart';
 import './form.dart';
@@ -99,7 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: PopupMenuButton<String>(
-              onSelected: (String option) {},
+              onSelected: (String option) async {
+                switch (option) {
+                  case 'private-policy':
+                    await launch(policyUrl);
+                    break;
+                  default:
+                }
+              },
               icon: Icon(
                 Icons.more_vert,
                 size: 32,
