@@ -89,120 +89,126 @@ class _DetailCountdownState extends State<DetailCountdown> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: size.height,
-              child: Stack(
+      body: isLoading
+          ? null
+          : SingleChildScrollView(
+              child: Column(
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: size.height * 0.15),
-                    height: size.height - (size.height * 0.15),
-                    padding: EdgeInsets.symmetric(horizontal: 19, vertical: 60),
-                    width: size.width,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFDCDCDD),
-                      boxShadow: [
-                        BoxShadow(
-                            blurRadius: 25,
-                            offset: Offset(0, 4),
-                            color: Colors.black.withOpacity(0.1)),
-                      ],
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              (countdown!.goal - countdown!.count) == 0
-                                  ? '${countdown?.type} finished'
-                                  : '${countdown?.type} left of ${countdown?.goal}',
-                              style: TextStyle(
-                                color: Color(0xff4C5C68),
-                                fontSize: 24,
-                              ),
+                  SizedBox(
+                    height: size.height,
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(top: size.height * 0.15),
+                          height: size.height - (size.height * 0.15),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 19, vertical: 60),
+                          width: size.width,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFDCDCDD),
+                            boxShadow: [
+                              BoxShadow(
+                                  blurRadius: 25,
+                                  offset: Offset(0, 4),
+                                  color: Colors.black.withOpacity(0.1)),
+                            ],
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(25),
+                              topRight: Radius.circular(25),
                             ),
-                          ],
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 30),
-                            child: (countdown!.goal - countdown!.count) == 0
-                                ? null
-                                : ElevatedButton(
-                                    onPressed: () async {
-                                      countdown?.count++;
-                                      await db.update(countdown);
-                                      refreshCountdown();
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                        Color(0xff1985A1),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'remove one'.toUpperCase(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 20,
-                                      ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    (countdown!.goal - countdown!.count) == 0
+                                        ? '${countdown?.type} finished'
+                                        : '${countdown?.type} left of ${countdown?.goal}',
+                                    style: TextStyle(
+                                      color: Color(0xff4C5C68),
+                                      fontSize: 24,
                                     ),
                                   ),
+                                ],
+                              ),
+                              Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 30),
+                                  child:
+                                      (countdown!.goal - countdown!.count) == 0
+                                          ? null
+                                          : ElevatedButton(
+                                              onPressed: () async {
+                                                countdown?.count++;
+                                                await db.update(countdown);
+                                                refreshCountdown();
+                                              },
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  Color(0xff1985A1),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'remove one'.toUpperCase(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 64),
+                                child: Text(
+                                  countdown?.name ?? '',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xff4C5C68),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 30),
+                                child: Text(
+                                  countdown?.description ?? '',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Color(0xff4C5C68),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 64),
-                          child: Text(
-                            countdown?.name ?? '',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xff4C5C68),
+                        Row(children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 55),
+                                      child: count(),
+                                    )
+                                  ],
+                                )
+                              ],
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 30),
-                          child: Text(
-                            countdown?.description ?? '',
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Color(0xff4C5C68),
-                            ),
-                          ),
-                        )
+                        ])
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 55),
-                              child: count(),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  )
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 

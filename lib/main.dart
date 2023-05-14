@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap: () async {
                         await Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (contextr) => DetailCountdown(
+                              builder: (context) => DetailCountdown(
                                     countdownId: item.id,
                                   )),
                         );
