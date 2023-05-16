@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:final_coutdown/form.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'db_helpers/sqlite_helper.dart';
 import 'models/countdown.dart';
@@ -18,12 +21,37 @@ class DetailCountdown extends StatefulWidget {
 class _DetailCountdownState extends State<DetailCountdown> {
   final db = CountdownProvider.instance;
   late Countdown? countdown;
+  late InterstitialAd _interstitialAd;
+  bool _isAdLoaded = false;
   bool isLoading = false;
+
+  final adUnitId = 'ca-app-pub-7166343695637098/4694576172';
+
+  void loadAd() {
+    if (Platform.isAndroid) {
+      InterstitialAd.load(
+          adUnitId: adUnitId,
+          request: const AdRequest(),
+          adLoadCallback: InterstitialAdLoadCallback(
+            // Called when an ad is successfully received.
+            onAdLoaded: (ad) {
+              // debugPrint('$ad loaded.');
+
+              _isAdLoaded = true;
+              // Keep a reference to the ad so you can show it later.
+              _interstitialAd = ad;
+            },
+            // Called when an ad request failed.
+            onAdFailedToLoad: (LoadAdError error) {},
+          ));
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
+    loadAd();
     refreshCountdown();
   }
 
@@ -48,6 +76,9 @@ class _DetailCountdownState extends State<DetailCountdown> {
         backgroundColor: Color(0xffFFFFFF),
         leading: IconButton(
             onPressed: () {
+              if (_isAdLoaded) {
+                _interstitialAd.show();
+              }
               Navigator.pop(context);
             },
             icon: Icon(

@@ -10,6 +10,9 @@
    <application
         android:label="Final Countdown"
         android:icon="@mipmap/launcher_icon">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7166343695637098~1726364579"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
