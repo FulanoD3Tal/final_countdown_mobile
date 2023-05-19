@@ -49,7 +49,7 @@ class CountdownProvider {
     Database? db = await database;
     List<Map<String, Object?>>? maps = await db.query(tableName);
     List<Countdown> countdowns = [];
-    if (maps != null && maps.length > 0) {
+    if (maps.length > 0) {
       countdowns = maps.map((map) => Countdown.fromMap(map: map)).toList();
     }
     return countdowns;

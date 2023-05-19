@@ -1,6 +1,5 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:final_coutdown/db_helpers/sqlite_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -106,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onSelected: (String option) async {
                 switch (option) {
                   case 'private-policy':
-                    await launch(policyUrl);
+                    await launchUrl(Uri.parse(policyUrl));
                     break;
                   default:
                 }
