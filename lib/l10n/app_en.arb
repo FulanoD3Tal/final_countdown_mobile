@@ -6,5 +6,49 @@
   "wantTo": "I want to",
   "emptyErrorMessage": "Please enter some text",
   "typePlaceholder": "eat,drink...",
-  "namePlaceholder": "apples..."
+  "namePlaceholder": "apples...",
+  "countdownFinished": "{countdownName} for {countdownType}",
+  "@countdownFinished": {
+    "description": "A message to show when the countdown go to zero",
+    "placeholders": {
+      "countdownName": {
+        "type": "String?",
+        "example": "Bob"
+      },
+      "countdownType": {
+        "type": "String?",
+        "example": "Bob"
+      }
+    }
+  },
+  "countdownOnGoing": "{countdownName} of {countdownGoal} to {countdownType} left",
+  "@countdownOnGoing": {
+    "description": "A message to the remaining",
+    "placeholders": {
+      "countdownName": {
+        "type": "String?",
+        "example": "Bob"
+      },
+      "countdownGoal": {
+        "type": "int",
+        "example": "Bob"
+      },
+      "countdownType": {
+        "type": "String?",
+        "example": "Bob"
+      }
+    }
+  },
+  "removeOne": "One less",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "yes": "Yes",
+  "sharePlaceholder": "I keeping track in Final Countdown {url}",
+  "@sharePlaceholder": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  }
 }

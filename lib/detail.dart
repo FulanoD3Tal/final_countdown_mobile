@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:final_coutdown/form.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -81,8 +83,8 @@ class _DetailCountdownState extends State<DetailCountdown> {
         .captureAndSave(directory, fileName: 'screenshot.png', pixelRatio: 2.0)
         .then((value) {
       Share.shareFiles(['$directory/screenshot.png'],
-          text:
-              'I keeping track in Final countdown https://play.google.com/store/apps/details?id=com.fulanod3tal.final_coutdown');
+          text: AppLocalizations.of(context)!.sharePlaceholder(
+              'https://play.google.com/store/apps/details?id=com.fulanod3tal.final_coutdown'));
     });
   }
 
@@ -190,13 +192,27 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      (countdown!.goal - countdown!.count) == 0
-                                          ? '${countdown?.type} finished'
-                                          : '${countdown?.type} left of ${countdown?.goal}',
-                                      style: TextStyle(
-                                        color: Color(0xff4C5C68),
-                                        fontSize: 24,
+                                    Expanded(
+                                      child: Text(
+                                        (countdown!.goal - countdown!.count) ==
+                                                0
+                                            ? AppLocalizations.of(context)!
+                                                .countdownFinished(
+                                                    countdown!.name,
+                                                    countdown!.type)
+                                            : AppLocalizations.of(context)!
+                                                .countdownOnGoing(
+                                                    countdown!.name,
+                                                    countdown!.goal,
+                                                    countdown!.type),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 32,
+                                          color: Color(0xff4C5C68),
+                                        ),
+                                        maxLines: 2,
+                                        softWrap: true,
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
                                   ],
@@ -221,7 +237,9 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                                   ),
                                                 ),
                                                 child: Text(
-                                                  'remove one'.toUpperCase(),
+                                                  AppLocalizations.of(context)!
+                                                      .removeOne
+                                                      .toUpperCase(),
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     fontSize: 20,
@@ -230,27 +248,6 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                               ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 64),
-                                  child: Text(
-                                    countdown?.name ?? '',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xff4C5C68),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 30),
-                                  child: Text(
-                                    countdown?.description ?? '',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      color: Color(0xff4C5C68),
-                                    ),
-                                  ),
-                                )
                               ],
                             ),
                           ),
@@ -289,7 +286,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
             content: SingleChildScrollView(
               child: Column(
                 children: [
-                  Text('Delete'),
+                  Text(AppLocalizations.of(context)!.delete),
                 ],
               ),
             ),
@@ -298,7 +295,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               TextButton(
                 onPressed: () async {
@@ -306,7 +303,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
                   await db.delete(countdownId);
                   Navigator.of(context).pop();
                 },
-                child: Text('Yes'),
+                child: Text(AppLocalizations.of(context)!.yes),
               ),
             ],
           );
