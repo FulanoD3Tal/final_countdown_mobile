@@ -1,5 +1,6 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:final_coutdown/db_helpers/sqlite_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,6 +21,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Final Countdown',
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
         fontFamily: 'Barlow',
         primarySwatch: Colors.blue,
@@ -160,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Color(0xFFDCDCDD),
                   ),
                   Text(
-                    'Add some countdowns...',
+                    AppLocalizations.of(context)!.addMoreItems,
                     style: TextStyle(
                       color: Color(0xFFDCDCDD),
                     ),

@@ -1,0 +1,10 @@
+{
+  "privatePolicy": "Private Policy",
+  "addMoreItems": "Add some countdowns...",
+  "save": "Save",
+  "newCountdown": "New\ncountdown",
+  "wantTo": "I want to",
+  "emptyErrorMessage": "Please enter some text",
+  "typePlaceholder": "eat,drink...",
+  "namePlaceholder": "apples..."
+}

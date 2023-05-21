@@ -1,0 +1,10 @@
+{
+  "privatePolicy": "Políticas de privacidad",
+  "addMoreItems": "Agrega algunas metas...",
+  "save": "Guardar",
+  "newCountdown": "Nueva\nmeta",
+  "wantTo": "Quiero",
+  "emptyErrorMessage": "Por favor ingresa texto",
+  "typePlaceholder": "comer,beber...",
+  "namePlaceholder": "manzanas..."
+}
