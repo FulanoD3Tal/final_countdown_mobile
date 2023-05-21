@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'db_helpers/sqlite_helper.dart';
-import 'inputtext.dart';
 import './models/countdown.dart';
 
 class FormCountdown extends StatefulWidget {
@@ -59,7 +59,7 @@ class _FormState extends State<FormCountdown> {
               color: Color(0xff4C5C68),
             )),
         title: Text(
-          'New\ncountdown',
+          AppLocalizations.of(context)!.newCountdown,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 32,
@@ -67,89 +67,145 @@ class _FormState extends State<FormCountdown> {
           ),
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Input(
-                        label: 'Name',
-                        defaultValue: model.name,
-                        required: true,
-                        onSaved: (value) {
-                          model.name = value;
-                        },
+      body: isLoading
+          ? null
+          : Container(
+              padding: EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 15, top: 30),
+                              child: Text(
+                                AppLocalizations.of(context)!.wantTo,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 32,
+                                  color: Color(0xff4C5C68),
+                                ),
+                              ),
+                            ),
+                            TextFormField(
+                              initialValue: model.type,
+                              onSaved: (value) {
+                                model.type = value;
+                                debugPrint(model.type);
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return AppLocalizations.of(context)!
+                                      .emptyErrorMessage;
+                                }
+                                return null;
+                              },
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 32,
+                                color: Color(0xff4C5C68),
+                              ),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: AppLocalizations.of(context)!
+                                      .typePlaceholder,
+                                  hintStyle: TextStyle(
+                                      color:
+                                          Color(0xff4C5C68).withOpacity(.5))),
+                            ),
+                            TextFormField(
+                              initialValue:
+                                  model.goal > 0 ? model.goal.toString() : '',
+                              keyboardType: TextInputType.number,
+                              onSaved: (value) {
+                                model.goal = int.tryParse(value ?? '') ?? 0;
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return AppLocalizations.of(context)!
+                                      .emptyErrorMessage;
+                                }
+                                return null;
+                              },
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 32,
+                                color: Color(0xff4C5C68),
+                              ),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: '4,5...',
+                                  hintStyle: TextStyle(
+                                      color:
+                                          Color(0xff4C5C68).withOpacity(.5))),
+                            ),
+                            TextFormField(
+                              initialValue: model.name,
+                              onSaved: (value) {
+                                model.name = value;
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return AppLocalizations.of(context)!
+                                      .emptyErrorMessage;
+                                }
+                                return null;
+                              },
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 32,
+                                color: Color(0xff4C5C68),
+                              ),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: AppLocalizations.of(context)!
+                                      .namePlaceholder,
+                                  hintStyle: TextStyle(
+                                      color:
+                                          Color(0xff4C5C68).withOpacity(.5))),
+                            ),
+                          ],
+                        ),
                       ),
-                      Input(
-                        label: 'Type',
-                        required: true,
-                        defaultValue: model.type,
-                        onSaved: (value) {
-                          model.type = value;
-                        },
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState?.save();
+                          if (model.id != null) {
+                            model.count =
+                                (model.goal < model.count) ? 0 : model.count;
+                            db.update(model);
+                          } else {
+                            db.add(model);
+                          }
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      style: ButtonStyle(
+                        minimumSize: MaterialStateProperty.all(
+                          Size(double.infinity, 40),
+                        ),
+                        backgroundColor: MaterialStateProperty.all(
+                          Color(0xff1985A1),
+                        ),
                       ),
-                      Input(
-                        label: 'Goal',
-                        required: true,
-                        defaultValue:
-                            model.goal > 0 ? model.goal.toString() : '',
-                        keyboardType: TextInputType.number,
-                        onSaved: (value) {
-                          model.goal = int.tryParse(value ?? '') ?? 0;
-                        },
+                      child: Text(
+                        AppLocalizations.of(context)!.save,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                        ),
                       ),
-                      Input(
-                        label: 'Description',
-                        required: false,
-                        textArea: true,
-                        defaultValue: model.description,
-                        onSaved: (value) {
-                          model.description = value;
-                        },
-                      ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState?.save();
-                    if (model.id != null) {
-                      model.count =
-                          (model.goal < model.count) ? 0 : model.count;
-                      db.update(model);
-                    } else {
-                      db.add(model);
-                    }
-                    Navigator.of(context).pop();
-                  }
-                },
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(
-                    Size(double.infinity, 40),
-                  ),
-                  backgroundColor: MaterialStateProperty.all(
-                    Color(0xff1985A1),
-                  ),
-                ),
-                child: Text(
-                  'SAVE',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
