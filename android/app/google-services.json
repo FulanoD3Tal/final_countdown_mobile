@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "207912267386",
+    "project_id": "finalcountdown-df683",
+    "storage_bucket": "finalcountdown-df683.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207912267386:android:0bc07f9c3f5990728b95c3",
+        "android_client_info": {
+          "package_name": "com.fulanod3tal.final_coutdown"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207912267386-62ijbau4q5jtb9fc5tktu46mh8pmfjtm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNWiWGweIrUxyxCPgR94HveKBTaEEMDqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207912267386-62ijbau4q5jtb9fc5tktu46mh8pmfjtm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

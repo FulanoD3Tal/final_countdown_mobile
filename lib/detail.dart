@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:final_coutdown/form.dart';
@@ -15,11 +17,14 @@ import 'package:screenshot/screenshot.dart';
 
 class DetailCountdown extends StatefulWidget {
   final countdownId;
+  
+  final FirebaseAnalytics analytics;
   const DetailCountdown({
     Key? key,
     required this.countdownId,
+     required FirebaseAnalytics this.analytics,
   }) : super(key: key);
-
+  
   @override
   _DetailCountdownState createState() => _DetailCountdownState();
 }
@@ -115,8 +120,10 @@ class _DetailCountdownState extends State<DetailCountdown> {
             Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: IconButton(
-                onPressed: () {
+                onPressed: () async {
                   takeScreenShotAndShare();
+                  await widget.analytics.logEvent(
+                      name: 'share', parameters: {'content_type': 'image'});
                 },
                 icon: Icon(
                   Icons.share,

@@ -2,6 +2,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 import 'package:final_coutdown/db_helpers/sqlite_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './home_menu.dart';
@@ -10,33 +14,43 @@ import './form.dart';
 import './models/countdown.dart';
 import 'detail.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Final Countdown',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: ThemeData(
-        fontFamily: 'Barlow',
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Final\nCountdown'),
-    );
+        title: 'Final Countdown',
+        navigatorObservers: [observer],
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: ThemeData(
+          fontFamily: 'Barlow',
+          primarySwatch: Colors.blue,
+        ),
+        home: MyHomePage(
+          title: 'Final\nCountdown',
+          analytics: analytics,
+        ));
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title, required this.analytics})
+      : super(key: key);
 
   final String title;
-
+  final FirebaseAnalytics analytics;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -144,8 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         await Navigator.of(context).push(
                           MaterialPageRoute(
                               builder: (context) => DetailCountdown(
-                                    countdownId: item.id,
-                                  )),
+                                  countdownId: item.id,
+                                  analytics: widget.analytics)),
                         );
                         refreshCountdowns();
                       },
