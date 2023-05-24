@@ -43,7 +43,7 @@
   "delete": "Borrar",
   "cancel": "Cancelar",
   "yes": "Aceptar",
-  "sharePlaceholder": "Sigo mis metas con Final Countdown {url}",
+  "sharePlaceholder": "Sigo mis metas con #FinalCountdown {url}",
   "@sharePlaceholder": {
     "placeholders": {
       "url": {
