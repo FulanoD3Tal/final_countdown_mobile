@@ -17,14 +17,14 @@ import 'package:screenshot/screenshot.dart';
 
 class DetailCountdown extends StatefulWidget {
   final countdownId;
-  
+
   final FirebaseAnalytics analytics;
   const DetailCountdown({
     Key? key,
     required this.countdownId,
-     required FirebaseAnalytics this.analytics,
+    required FirebaseAnalytics this.analytics,
   }) : super(key: key);
-  
+
   @override
   _DetailCountdownState createState() => _DetailCountdownState();
 }
@@ -52,13 +52,16 @@ class _DetailCountdownState extends State<DetailCountdown> {
             // Called when an ad is successfully received.
             onAdLoaded: (ad) {
               debugPrint('$ad loaded.');
-
-              _isAdLoaded = true;
+              setState(() {
+                _isAdLoaded = true;
+              });
               // Keep a reference to the ad so you can show it later.
               _interstitialAd = ad;
             },
             // Called when an ad request failed.
-            onAdFailedToLoad: (LoadAdError error) {},
+            onAdFailedToLoad: (LoadAdError error) {
+              debugPrint(error.message);
+            },
           ));
     }
   }
@@ -96,191 +99,201 @@ class _DetailCountdownState extends State<DetailCountdown> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Screenshot(
-      controller: screenshotController,
-      child: Scaffold(
-        backgroundColor: Color(0xffFFFFFF),
-        appBar: AppBar(
-          elevation: 0,
-          toolbarHeight: 80,
+    return WillPopScope(
+      onWillPop: () {
+        if (_isAdLoaded) {
+          _interstitialAd.show();
+        }
+        return Future.value(true);
+      },
+      child: Screenshot(
+        controller: screenshotController,
+        child: Scaffold(
           backgroundColor: Color(0xffFFFFFF),
-          leading: IconButton(
-              onPressed: () {
-                if (_isAdLoaded) {
-                  _interstitialAd.show();
-                }
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.arrow_back_ios_new_outlined,
-                size: 32,
-                color: Color(0xff4C5C68),
-              )),
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: IconButton(
-                onPressed: () async {
-                  takeScreenShotAndShare();
-                  await widget.analytics.logEvent(
-                      name: 'share', parameters: {'content_type': 'image'});
-                },
-                icon: Icon(
-                  Icons.share,
-                  size: 32,
-                  color: Color(0xff4C5C68),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: IconButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => FormCountdown(
-                      id: countdown?.id,
-                    ),
-                  ));
-                  refreshCountdown();
-                },
-                icon: Icon(
-                  Icons.edit_outlined,
-                  size: 32,
-                  color: Color(0xff4C5C68),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: IconButton(
+          appBar: AppBar(
+            elevation: 0,
+            toolbarHeight: 80,
+            backgroundColor: Color(0xffFFFFFF),
+            leading: IconButton(
                 onPressed: () {
-                  _showDialog(context, countdown?.id);
+                  if (_isAdLoaded) {
+                    _interstitialAd.show();
+                  }
+                  Navigator.pop(context);
                 },
                 icon: Icon(
-                  Icons.delete_outline,
+                  Icons.arrow_back_ios_new_outlined,
                   size: 32,
                   color: Color(0xff4C5C68),
+                )),
+            actions: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: IconButton(
+                  onPressed: () async {
+                    takeScreenShotAndShare();
+                    await widget.analytics.logEvent(
+                        name: 'share', parameters: {'content_type': 'image'});
+                  },
+                  icon: Icon(
+                    Icons.share,
+                    size: 32,
+                    color: Color(0xff4C5C68),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        body: isLoading
-            ? null
-            : SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: size.height,
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top: size.height * 0.15),
-                            height: size.height - (size.height * 0.15),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 19, vertical: 60),
-                            width: size.width,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFDCDCDD),
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 25,
-                                    offset: Offset(0, 4),
-                                    color: Colors.black.withOpacity(0.1)),
-                              ],
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(25),
-                                topRight: Radius.circular(25),
+              Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: IconButton(
+                  onPressed: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => FormCountdown(
+                        id: countdown?.id,
+                      ),
+                    ));
+                    refreshCountdown();
+                  },
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    size: 32,
+                    color: Color(0xff4C5C68),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: IconButton(
+                  onPressed: () {
+                    _showDialog(context, countdown?.id);
+                  },
+                  icon: Icon(
+                    Icons.delete_outline,
+                    size: 32,
+                    color: Color(0xff4C5C68),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          body: isLoading
+              ? null
+              : SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: size.height,
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(top: size.height * 0.15),
+                              height: size.height - (size.height * 0.15),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 19, vertical: 60),
+                              width: size.width,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFDCDCDD),
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 25,
+                                      offset: Offset(0, 4),
+                                      color: Colors.black.withOpacity(0.1)),
+                                ],
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(25),
+                                  topRight: Radius.circular(25),
+                                ),
                               ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        (countdown!.goal - countdown!.count) ==
-                                                0
-                                            ? AppLocalizations.of(context)!
-                                                .countdownFinished(
-                                                    countdown!.name,
-                                                    countdown!.type)
-                                            : AppLocalizations.of(context)!
-                                                .countdownOnGoing(
-                                                    countdown!.name,
-                                                    countdown!.goal,
-                                                    countdown!.type),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 32,
-                                          color: Color(0xff4C5C68),
-                                        ),
-                                        maxLines: 2,
-                                        softWrap: true,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 30),
-                                    child:
-                                        (countdown!.goal - countdown!.count) ==
-                                                0
-                                            ? null
-                                            : ElevatedButton(
-                                                onPressed: () async {
-                                                  countdown?.count++;
-                                                  await db.update(countdown);
-                                                  refreshCountdown();
-                                                },
-                                                style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all(
-                                                    Color(0xff1985A1),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  AppLocalizations.of(context)!
-                                                      .removeOne
-                                                      .toUpperCase(),
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 20,
-                                                  ),
-                                                ),
-                                              ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(children: [
-                            Expanded(
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 55),
-                                        child: count(),
-                                      )
+                                      Expanded(
+                                        child: Text(
+                                          (countdown!.goal -
+                                                      countdown!.count) ==
+                                                  0
+                                              ? AppLocalizations.of(context)!
+                                                  .countdownFinished(
+                                                      countdown!.name,
+                                                      countdown!.type)
+                                              : AppLocalizations.of(context)!
+                                                  .countdownOnGoing(
+                                                      countdown!.name,
+                                                      countdown!.goal,
+                                                      countdown!.type),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 32,
+                                            color: Color(0xff4C5C68),
+                                          ),
+                                          maxLines: 2,
+                                          softWrap: true,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     ],
-                                  )
+                                  ),
+                                  Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 30),
+                                      child: (countdown!.goal -
+                                                  countdown!.count) ==
+                                              0
+                                          ? null
+                                          : ElevatedButton(
+                                              onPressed: () async {
+                                                countdown?.count++;
+                                                await db.update(countdown);
+                                                refreshCountdown();
+                                              },
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  Color(0xff1985A1),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .removeOne
+                                                    .toUpperCase(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ])
-                        ],
+                            Row(children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 55),
+                                          child: count(),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ])
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }
