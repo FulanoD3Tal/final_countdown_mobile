@@ -22,7 +22,7 @@ class DetailCountdown extends StatefulWidget {
   const DetailCountdown({
     Key? key,
     required this.countdownId,
-    required FirebaseAnalytics this.analytics,
+    required this.analytics,
   }) : super(key: key);
 
   @override
