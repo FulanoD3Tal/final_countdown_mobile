@@ -49,6 +49,7 @@ android {
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resValue "string", "admob_app_id", ADMOB_APP_ID
     }
 
    signingConfigs {

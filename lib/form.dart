@@ -25,9 +25,7 @@ class _FormState extends State<FormCountdown> {
   bool _isAdLoaded = false;
   bool isLoading = false;
 
-  final adUnitId = 'ca-app-pub-7166343695637098/9833221743';
-  //Testing addunit
-  // final adUnitId = 'ca-app-pub-3940256099942544/1033173712';
+  static const adUnitId = String.fromEnvironment("ADMOB_FORM_UNIT_ID",defaultValue: "");
 
   void loadAd() {
     if (Platform.isAndroid) {
