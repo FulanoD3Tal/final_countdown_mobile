@@ -19,6 +19,7 @@ class DetailCountdown extends StatefulWidget {
   final countdownId;
 
   final FirebaseAnalytics analytics;
+
   const DetailCountdown({
     Key? key,
     required this.countdownId,
@@ -39,7 +40,8 @@ class _DetailCountdownState extends State<DetailCountdown> {
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
 
-  static const adUnitId = String.fromEnvironment("ADMOB_DETAIL_UNIT_ID",defaultValue: "");
+  static const adUnitId =
+      String.fromEnvironment("ADMOB_DETAIL_UNIT_ID", defaultValue: "");
 
   void loadAd() {
     if (Platform.isAndroid) {
@@ -144,11 +146,16 @@ class _DetailCountdownState extends State<DetailCountdown> {
                 padding: EdgeInsets.only(right: 20.0),
                 child: IconButton(
                   onPressed: () async {
-                    await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => FormCountdown(
-                        id: countdown?.id,
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => FormCountdown(
+                          id: countdown?.id,
+                        ),
+                        settings: new RouteSettings(
+                          name: '/form',
+                        ),
                       ),
-                    ));
+                    );
                     refreshCountdown();
                   },
                   icon: Icon(

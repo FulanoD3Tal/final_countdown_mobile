@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -57,6 +58,7 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
   final FirebaseAnalytics analytics;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -137,9 +139,14 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.only(right: 20.0),
             child: IconButton(
               onPressed: () async {
-                await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FormCountdown(),
-                ));
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FormCountdown(),
+                    settings: new RouteSettings(
+                      name: '/form',
+                    ),
+                  ),
+                );
                 refreshCountdowns();
               },
               icon: Icon(
@@ -190,9 +197,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap: () async {
                         await Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) => DetailCountdown(
-                                  countdownId: item.id,
-                                  analytics: widget.analytics)),
+                            builder: (context) => DetailCountdown(
+                              countdownId: item.id,
+                              analytics: widget.analytics,
+                            ),
+                            settings: new RouteSettings(
+                              name: '/detail',
+                            ),
+                          ),
                         );
                         refreshCountdowns();
                       },
