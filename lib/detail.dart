@@ -39,9 +39,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
 
-  final adUnitId = 'ca-app-pub-7166343695637098/4694576172';
-  //Testing addunit
-  // final adUnitId = 'ca-app-pub-3940256099942544/1033173712';
+  static const adUnitId = String.fromEnvironment("ADMOB_DETAIL_UNIT_ID",defaultValue: "");
 
   void loadAd() {
     if (Platform.isAndroid) {
