@@ -50,5 +50,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "removeAds": "Remover anuncios"
 }

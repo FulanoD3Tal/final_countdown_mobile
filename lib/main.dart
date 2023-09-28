@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart'
     hide
         DebugGeography,
@@ -19,6 +20,8 @@ import './countdown_item.dart';
 import './form.dart';
 import './models/countdown.dart';
 import 'detail.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'dart:io' show Platform;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +29,14 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Purchases.setLogLevel(LogLevel.debug);
+  PurchasesConfiguration configuration;
+  if (Platform.isAndroid) {
+    const apiKey =
+        String.fromEnvironment('GOOGLE_STORE_PUBLIC_API', defaultValue: '');
+    configuration = PurchasesConfiguration(apiKey);
+    await Purchases.configure(configuration);
+  }
   runApp(MyApp());
 }
 
@@ -138,6 +149,30 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: IconButton(
+              tooltip: AppLocalizations.of(context)!.removeAds,
+              onPressed: () async {
+                try {
+                  Offerings offerings = await Purchases.getOfferings();
+                  if(offerings.current != null){
+                      List<Package> packages = offerings.current!.availablePackages;
+                      CustomerInfo customerInfo = await Purchases.purchasePackage(packages[0]);
+                  }
+                  // CustomerInfo customerInfo = await Purchases.purchasePackage(package);
+                } on PlatformException catch (e) {
+                  // optional error handling
+                }
+              },
+              icon: Icon(
+                Icons.ads_click,
+                size: 32,
+                color: Color(0xff4C5C68),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: IconButton(
+              tooltip: AppLocalizations.of(context)!.addMoreItems,
               onPressed: () async {
                 await Navigator.of(context).push(
                   MaterialPageRoute(
