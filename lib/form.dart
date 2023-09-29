@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 import 'db_helpers/sqlite_helper.dart';
 import './models/countdown.dart';
 
 class FormCountdown extends StatefulWidget {
   final int? id;
+
   const FormCountdown({
     Key? key,
     this.id,
@@ -25,28 +27,31 @@ class _FormState extends State<FormCountdown> {
   bool _isAdLoaded = false;
   bool isLoading = false;
 
-  static const adUnitId = String.fromEnvironment("ADMOB_FORM_UNIT_ID",defaultValue: "");
+  static const adUnitId = String.fromEnvironment("ADMOB_FORM_UNIT_ID", defaultValue: "");
 
-  void loadAd() {
-    if (Platform.isAndroid) {
-      InterstitialAd.load(
-          adUnitId: adUnitId,
-          request: const AdRequest(),
-          adLoadCallback: InterstitialAdLoadCallback(
-            // Called when an ad is successfully received.
-            onAdLoaded: (ad) {
-              debugPrint('$ad loaded.');
-              setState(() {
-                _isAdLoaded = true;
-              });
-              // Keep a reference to the ad so you can show it later.
-              _interstitialAd = ad;
-            },
-            // Called when an ad request failed.
-            onAdFailedToLoad: (LoadAdError error) {
-              debugPrint(error.message);
-            },
-          ));
+  void loadAd() async {
+    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+    if (customerInfo.entitlements.all["Free ads"]!.isActive == false) {
+      if (Platform.isAndroid) {
+        InterstitialAd.load(
+            adUnitId: adUnitId,
+            request: const AdRequest(),
+            adLoadCallback: InterstitialAdLoadCallback(
+              // Called when an ad is successfully received.
+              onAdLoaded: (ad) {
+                debugPrint('$ad loaded.');
+                setState(() {
+                  _isAdLoaded = true;
+                });
+                // Keep a reference to the ad so you can show it later.
+                _interstitialAd = ad;
+              },
+              // Called when an ad request failed.
+              onAdFailedToLoad: (LoadAdError error) {
+                debugPrint(error.message);
+              },
+            ));
+      }
     }
   }
 
@@ -140,8 +145,7 @@ class _FormState extends State<FormCountdown> {
                                 },
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)!
-                                        .emptyErrorMessage;
+                                    return AppLocalizations.of(context)!.emptyErrorMessage;
                                   }
                                   return null;
                                 },
@@ -152,23 +156,18 @@ class _FormState extends State<FormCountdown> {
                                 ),
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    hintText: AppLocalizations.of(context)!
-                                        .typePlaceholder,
-                                    hintStyle: TextStyle(
-                                        color:
-                                            Color(0xff4C5C68).withOpacity(.5))),
+                                    hintText: AppLocalizations.of(context)!.typePlaceholder,
+                                    hintStyle: TextStyle(color: Color(0xff4C5C68).withOpacity(.5))),
                               ),
                               TextFormField(
-                                initialValue:
-                                    model.goal > 0 ? model.goal.toString() : '',
+                                initialValue: model.goal > 0 ? model.goal.toString() : '',
                                 keyboardType: TextInputType.number,
                                 onSaved: (value) {
                                   model.goal = int.tryParse(value ?? '') ?? 0;
                                 },
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)!
-                                        .emptyErrorMessage;
+                                    return AppLocalizations.of(context)!.emptyErrorMessage;
                                   }
                                   return null;
                                 },
@@ -180,9 +179,7 @@ class _FormState extends State<FormCountdown> {
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: '4,5...',
-                                    hintStyle: TextStyle(
-                                        color:
-                                            Color(0xff4C5C68).withOpacity(.5))),
+                                    hintStyle: TextStyle(color: Color(0xff4C5C68).withOpacity(.5))),
                               ),
                               TextFormField(
                                 initialValue: model.name,
@@ -191,8 +188,7 @@ class _FormState extends State<FormCountdown> {
                                 },
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)!
-                                        .emptyErrorMessage;
+                                    return AppLocalizations.of(context)!.emptyErrorMessage;
                                   }
                                   return null;
                                 },
@@ -203,11 +199,8 @@ class _FormState extends State<FormCountdown> {
                                 ),
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    hintText: AppLocalizations.of(context)!
-                                        .namePlaceholder,
-                                    hintStyle: TextStyle(
-                                        color:
-                                            Color(0xff4C5C68).withOpacity(.5))),
+                                    hintText: AppLocalizations.of(context)!.namePlaceholder,
+                                    hintStyle: TextStyle(color: Color(0xff4C5C68).withOpacity(.5))),
                               ),
                             ],
                           ),
@@ -218,8 +211,7 @@ class _FormState extends State<FormCountdown> {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState?.save();
                             if (model.id != null) {
-                              model.count =
-                                  (model.goal < model.count) ? 0 : model.count;
+                              model.count = (model.goal < model.count) ? 0 : model.count;
                               db.update(model);
                             } else {
                               db.add(model);

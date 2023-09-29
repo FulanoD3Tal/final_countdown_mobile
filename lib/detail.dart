@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:final_coutdown/form.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'db_helpers/sqlite_helper.dart';
 import 'models/countdown.dart';
 
@@ -40,29 +41,31 @@ class _DetailCountdownState extends State<DetailCountdown> {
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
 
-  static const adUnitId =
-      String.fromEnvironment("ADMOB_DETAIL_UNIT_ID", defaultValue: "");
+  static const adUnitId = String.fromEnvironment("ADMOB_DETAIL_UNIT_ID", defaultValue: "");
 
-  void loadAd() {
-    if (Platform.isAndroid) {
-      InterstitialAd.load(
-          adUnitId: adUnitId,
-          request: const AdRequest(),
-          adLoadCallback: InterstitialAdLoadCallback(
-            // Called when an ad is successfully received.
-            onAdLoaded: (ad) {
-              debugPrint('$ad loaded.');
-              setState(() {
-                _isAdLoaded = true;
-              });
-              // Keep a reference to the ad so you can show it later.
-              _interstitialAd = ad;
-            },
-            // Called when an ad request failed.
-            onAdFailedToLoad: (LoadAdError error) {
-              debugPrint(error.message);
-            },
-          ));
+  void loadAd() async {
+    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+    if (customerInfo.entitlements.all["Free ads"]!.isActive == false) {
+      if (Platform.isAndroid) {
+        InterstitialAd.load(
+            adUnitId: adUnitId,
+            request: const AdRequest(),
+            adLoadCallback: InterstitialAdLoadCallback(
+              // Called when an ad is successfully received.
+              onAdLoaded: (ad) {
+                debugPrint('$ad loaded.');
+                setState(() {
+                  _isAdLoaded = true;
+                });
+                // Keep a reference to the ad so you can show it later.
+                _interstitialAd = ad;
+              },
+              // Called when an ad request failed.
+              onAdFailedToLoad: (LoadAdError error) {
+                debugPrint(error.message);
+              },
+            ));
+      }
     }
   }
 
@@ -132,8 +135,8 @@ class _DetailCountdownState extends State<DetailCountdown> {
                 child: IconButton(
                   onPressed: () async {
                     takeScreenShotAndShare();
-                    await widget.analytics.logEvent(
-                        name: 'share', parameters: {'content_type': 'image'});
+                    await widget.analytics
+                        .logEvent(name: 'share', parameters: {'content_type': 'image'});
                   },
                   icon: Icon(
                     Icons.share,
@@ -192,8 +195,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
                             Container(
                               margin: EdgeInsets.only(top: size.height * 0.15),
                               height: size.height - (size.height * 0.15),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 19, vertical: 60),
+                              padding: EdgeInsets.symmetric(horizontal: 19, vertical: 60),
                               width: size.width,
                               decoration: BoxDecoration(
                                 color: Color(0xFFDCDCDD),
@@ -216,18 +218,13 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          (countdown!.goal -
-                                                      countdown!.count) ==
-                                                  0
-                                              ? AppLocalizations.of(context)!
-                                                  .countdownFinished(
-                                                      countdown!.name,
-                                                      countdown!.type)
-                                              : AppLocalizations.of(context)!
-                                                  .countdownOnGoing(
-                                                      countdown!.name,
-                                                      countdown!.goal,
-                                                      countdown!.type),
+                                          (countdown!.goal - countdown!.count) == 0
+                                              ? AppLocalizations.of(context)!.countdownFinished(
+                                                  countdown!.name, countdown!.type)
+                                              : AppLocalizations.of(context)!.countdownOnGoing(
+                                                  countdown!.name,
+                                                  countdown!.goal,
+                                                  countdown!.type),
                                           style: TextStyle(
                                             fontWeight: FontWeight.w700,
                                             fontSize: 32,
@@ -243,9 +240,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                   Center(
                                     child: Padding(
                                       padding: EdgeInsets.only(top: 30),
-                                      child: (countdown!.goal -
-                                                  countdown!.count) ==
-                                              0
+                                      child: (countdown!.goal - countdown!.count) == 0
                                           ? null
                                           : ElevatedButton(
                                               onPressed: () async {
@@ -254,8 +249,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                                 refreshCountdown();
                                               },
                                               style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all(
+                                                backgroundColor: MaterialStateProperty.all(
                                                   Color(0xff1985A1),
                                                 ),
                                               ),
@@ -279,8 +273,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(top: 55),
@@ -343,9 +336,7 @@ class _DetailCountdownState extends State<DetailCountdown> {
       style: TextStyle(
           fontSize: 100,
           fontWeight: FontWeight.w700,
-          color: (countdown!.goal - countdown!.count) == 0
-              ? Color(0xff1985A1)
-              : Color(0xff4C5C68),
+          color: (countdown!.goal - countdown!.count) == 0 ? Color(0xff1985A1) : Color(0xff4C5C68),
           shadows: [
             Shadow(
               blurRadius: 25,
