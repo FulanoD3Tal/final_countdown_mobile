@@ -50,5 +50,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "removeAds": "Remove ads",
+  "thanksForSupport": "Thanks you for the support!!"
 }

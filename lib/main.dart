@@ -1,9 +1,6 @@
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart'
-    hide
-        DebugGeography,
-        ConsentStatus,
-        ConsentRequestParameters,
-        ConsentDebugSettings;
+    hide DebugGeography, ConsentStatus, ConsentRequestParameters, ConsentDebugSettings;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -19,6 +16,8 @@ import './countdown_item.dart';
 import './form.dart';
 import './models/countdown.dart';
 import 'detail.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'dart:io' show Platform;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,13 +25,19 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Purchases.setLogLevel(LogLevel.debug);
+  PurchasesConfiguration configuration;
+  if (Platform.isAndroid) {
+    const apiKey = String.fromEnvironment('GOOGLE_STORE_PUBLIC_API', defaultValue: '');
+    configuration = PurchasesConfiguration(apiKey);
+    await Purchases.configure(configuration);
+  }
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +58,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title, required this.analytics})
-      : super(key: key);
+  MyHomePage({Key? key, required this.title, required this.analytics}) : super(key: key);
 
   final String title;
   final FirebaseAnalytics analytics;
@@ -75,12 +79,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   late List<Countdown> countdowns;
   bool isLoading = false;
+  bool freeAds = false;
 
   @override
   void initState() {
     super.initState();
     updateConsent();
     refreshCountdowns();
+    getPurchaseStatus();
   }
 
   @override
@@ -106,6 +112,13 @@ class _MyHomePageState extends State<MyHomePage> {
       // `showConsentForm` returns the latest consent info, after the consent from has been closed.
       info = await UserMessagingPlatform.instance.showConsentForm();
     }
+  }
+
+  void getPurchaseStatus() async {
+    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+    setState(() {
+      freeAds = customerInfo.entitlements.all["Free ads"]!.isActive;
+    });
   }
 
   Future refreshCountdowns() async {
@@ -135,9 +148,44 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         actions: <Widget>[
+          if (freeAds == false) ...[
+            Padding(
+              padding: EdgeInsets.only(right: 10.0),
+              child: IconButton(
+                tooltip: AppLocalizations.of(context)!.removeAds,
+                onPressed: () async {
+                  try {
+                    Offerings offerings = await Purchases.getOfferings();
+                    if (offerings.current != null) {
+                      List<Package> packages = offerings.current!.availablePackages;
+                      CustomerInfo customerInfo = await Purchases.purchasePackage(packages[0]);
+                      final snackBar = SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)!.thanksForSupport,
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      setState(() {
+                        freeAds = customerInfo.entitlements.all["Free ads"]!.isActive;
+                      });
+                    }
+                  } on PlatformException catch (e) {
+                    var errorCode = PurchasesErrorHelper.getErrorCode(e);
+                    if (errorCode != PurchasesErrorCode.purchaseCancelledError) {}
+                  }
+                },
+                icon: Icon(
+                  Icons.ads_click,
+                  size: 32,
+                  color: Color(0xff4C5C68),
+                ),
+              ),
+            )
+          ],
           Padding(
-            padding: EdgeInsets.only(right: 20.0),
+            padding: EdgeInsets.only(right: 10.0),
             child: IconButton(
+              tooltip: AppLocalizations.of(context)!.addMoreItems,
               onPressed: () async {
                 await Navigator.of(context).push(
                   MaterialPageRoute(
@@ -157,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 20.0),
+            padding: EdgeInsets.only(right: 10.0),
             child: PopupMenuButton<String>(
               onSelected: (String option) async {
                 switch (option) {
