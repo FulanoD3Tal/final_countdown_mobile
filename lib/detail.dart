@@ -45,27 +45,27 @@ class _DetailCountdownState extends State<DetailCountdown> {
 
   void loadAd() async {
     CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-    if (customerInfo.entitlements.all["Free ads"]!.isActive == false) {
-      if (Platform.isAndroid) {
-        InterstitialAd.load(
-            adUnitId: adUnitId,
-            request: const AdRequest(),
-            adLoadCallback: InterstitialAdLoadCallback(
-              // Called when an ad is successfully received.
-              onAdLoaded: (ad) {
-                debugPrint('$ad loaded.');
-                setState(() {
-                  _isAdLoaded = true;
-                });
-                // Keep a reference to the ad so you can show it later.
-                _interstitialAd = ad;
-              },
-              // Called when an ad request failed.
-              onAdFailedToLoad: (LoadAdError error) {
-                debugPrint(error.message);
-              },
-            ));
-      }
+    EntitlementInfo? entitlementInfo = customerInfo.entitlements.all["Free ads"];
+    bool purchaseMade = entitlementInfo != null && entitlementInfo.isActive;
+    if (Platform.isAndroid & !purchaseMade) {
+      InterstitialAd.load(
+          adUnitId: adUnitId,
+          request: const AdRequest(),
+          adLoadCallback: InterstitialAdLoadCallback(
+            // Called when an ad is successfully received.
+            onAdLoaded: (ad) {
+              debugPrint('$ad loaded.');
+              setState(() {
+                _isAdLoaded = true;
+              });
+              // Keep a reference to the ad so you can show it later.
+              _interstitialAd = ad;
+            },
+            // Called when an ad request failed.
+            onAdFailedToLoad: (LoadAdError error) {
+              debugPrint(error.message);
+            },
+          ));
     }
   }
 

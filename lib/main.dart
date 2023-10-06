@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void getPurchaseStatus() async {
     CustomerInfo customerInfo = await Purchases.getCustomerInfo();
     setState(() {
-      freeAds = customerInfo.entitlements.all["Free ads"]!.isActive;
+      freeAds = customerInfo.entitlements.all["Free ads"]?.isActive ?? false;
     });
   }
 
@@ -166,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       setState(() {
-                        freeAds = customerInfo.entitlements.all["Free ads"]!.isActive;
+                        freeAds = customerInfo.entitlements.all["Free ads"]?.isActive ?? false;
                       });
                     }
                   } on PlatformException catch (e) {
