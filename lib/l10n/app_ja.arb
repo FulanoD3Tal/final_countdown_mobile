@@ -1,0 +1,56 @@
+{
+  "privatePolicy": "プライベートポリシー",
+  "addMoreItems": "カウントダウンを追加...",
+  "save": "保存",
+  "newCountdown": "新しいカウントダウン",
+  "wantTo": "したい",
+  "emptyErrorMessage": "テキストを入力してください",
+  "typePlaceholder": "食べて、飲んで…",
+  "namePlaceholder": "りんご...",
+  "countdownFinished": "{countdownType} の {countdownName}",
+  "@countdownFinished": {
+    "description": "A message to show when the countdown go to zero",
+    "placeholders": {
+      "countdownName": {
+        "type": "String?",
+        "example": "Bob"
+      },
+      "countdownType": {
+        "type": "String?",
+        "example": "Bob"
+      }
+    }
+  },
+  "countdownOnGoing": "{countdownGoal} の {countdownName} を残り {countdownType} まで",
+  "@countdownOnGoing": {
+    "description": "A message to the remaining",
+    "placeholders": {
+      "countdownName": {
+        "type": "String?",
+        "example": "Bob"
+      },
+      "countdownGoal": {
+        "type": "int",
+        "example": "Bob"
+      },
+      "countdownType": {
+        "type": "String?",
+        "example": "Bob"
+      }
+    }
+  },
+  "removeOne": "1 つ減りました",
+  "delete": "消去",
+  "cancel": "キャンセル",
+  "yes": "はい",
+  "sharePlaceholder": "#FinalCountdown {url} で追跡しています",
+  "@sharePlaceholder": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "removeAds": "広告を削除",
+  "thanksForSupport": "ご支援ありがとうございます!!"
+}
