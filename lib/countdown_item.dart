@@ -20,7 +20,7 @@ class CountdownItem extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: finished ? Color(0xff1985A1) : Color(0xFFDCDCDD),
+          color: finished ? Theme.of(context).colorScheme.primary : Color(0xFFDCDCDD),
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(

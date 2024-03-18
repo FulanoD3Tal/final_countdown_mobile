@@ -242,17 +242,12 @@ class _DetailCountdownState extends State<DetailCountdown> {
                                       padding: EdgeInsets.only(top: 30),
                                       child: (countdown!.goal - countdown!.count) == 0
                                           ? null
-                                          : ElevatedButton(
+                                          : FilledButton(
                                               onPressed: () async {
                                                 countdown?.count++;
                                                 await db.update(countdown);
                                                 refreshCountdown();
                                               },
-                                              style: ButtonStyle(
-                                                backgroundColor: MaterialStateProperty.all(
-                                                  Color(0xff1985A1),
-                                                ),
-                                              ),
                                               child: Text(
                                                 AppLocalizations.of(context)!
                                                     .removeOne
