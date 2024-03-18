@@ -206,7 +206,7 @@ class _FormState extends State<FormCountdown> {
                           ),
                         ),
                       ),
-                      ElevatedButton(
+                      FilledButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState?.save();
@@ -225,9 +225,6 @@ class _FormState extends State<FormCountdown> {
                         style: ButtonStyle(
                           minimumSize: MaterialStateProperty.all(
                             Size(double.infinity, 40),
-                          ),
-                          backgroundColor: MaterialStateProperty.all(
-                            Color(0xff1985A1),
                           ),
                         ),
                         child: Text(

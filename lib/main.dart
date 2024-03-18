@@ -48,7 +48,8 @@ class MyApp extends StatelessWidget {
         supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
           fontFamily: 'Barlow',
-          primarySwatch: Colors.blue,
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff1985A1))
         ),
         home: MyHomePage(
           title: 'Final\nCountdown',
