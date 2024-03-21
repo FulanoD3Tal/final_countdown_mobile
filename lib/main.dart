@@ -140,10 +140,12 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           try {
-            List<StoreProduct> donations =
-                await Purchases.getProducts(['final_countdown_donation']);
-            StoreProduct firstDonation = donations[0];
-            CustomerInfo customerInfo = await Purchases.purchaseStoreProduct(firstDonation);
+            Offerings offerings = await Purchases.getOfferings();
+            if (offerings.current != null) {
+              List<Package> packages = offerings.current!.availablePackages;
+              Package donationPackage = packages.firstWhere((element) => element.identifier == 'donation');
+              CustomerInfo customerInfo = await Purchases.purchasePackage(donationPackage);
+            }
             final snackBar = SnackBar(
               content: Text(
                 AppLocalizations.of(context)!.thanksForSupport,
