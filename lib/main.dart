@@ -49,7 +49,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Barlow',
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff1985A1))
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(0xff1985A1),
+          ),
         ),
         home: MyHomePage(
           title: 'Final\nCountdown',
@@ -135,6 +137,28 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          try {
+            Offerings offerings = await Purchases.getOfferings();
+            if (offerings.current != null) {
+              List<Package> packages = offerings.current!.availablePackages;
+              Package donationPackage = packages.firstWhere((element) => element.identifier == 'donation');
+              CustomerInfo customerInfo = await Purchases.purchasePackage(donationPackage);
+            }
+            final snackBar = SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.thanksForSupport,
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } on PlatformException catch (e) {
+            var errorCode = PurchasesErrorHelper.getErrorCode(e);
+            if (errorCode != PurchasesErrorCode.purchaseCancelledError) {}
+          }
+        },
+        child: const Icon(Icons.volunteer_activism),
+      ),
       backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
         elevation: 0,
